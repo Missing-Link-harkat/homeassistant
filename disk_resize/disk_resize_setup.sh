@@ -13,8 +13,6 @@ tune2fs -O^resize_inode /dev/mmcblk0p2
 fsck.ext4 -y /dev/mmcblk0p2
 
 # Set disk_resize_finalize to run on reboot to finalize disk resize
-
-
-
+echo "$SCRIPT_DIR/disk_resize_finalize.sh" >> /etc/rc.local
 
 reboot
