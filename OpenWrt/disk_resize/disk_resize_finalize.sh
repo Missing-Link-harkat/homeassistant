@@ -6,4 +6,4 @@ SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 resize2fs /dev/mmcblk0p2
 
 # Remove this script from running on boot
-sed -i "\|$SCRIPT_DIR/resize_finalize.sh|d" /etc/rc.local
+sed -i "\|$SCRIPT_DIR/disk_resize_finalize.sh|d" /etc/rc.local
