@@ -10,6 +10,7 @@ opkg install openssh-sftp-server
 uci set network.lan.proto="dhcp"\
 uci commit network\
 service network restart
-### HomeAssistant api
+### Home Assistant muistio:
 ### Access token
 - pakollinen
+- [API dokumentaatio](https://developers.home-assistant.io/docs/api/rest/)
