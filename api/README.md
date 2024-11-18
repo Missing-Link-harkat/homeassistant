@@ -9,18 +9,12 @@
 
 ### Set virtual env:
 
-```python -m venv venv
-
-```
+```python -m venv venv```
 
 ### Enable:
 
-```source venv/bin/activate
-
-```
+```source venv/bin/activate```
 
 ### Install:
 
-```pip install -r requirements.txt
-
-```
+```pip install -r requirements.txt```
