@@ -10,3 +10,6 @@ opkg install openssh-sftp-server
 uci set network.lan.proto="dhcp"\
 uci commit network\
 service network restart
+
+### Home Assistant muistio:
+####
