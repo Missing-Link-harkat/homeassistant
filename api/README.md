@@ -6,7 +6,8 @@
 - ip address
 
 ## Setup
-
+### Make .env
+Set values according to .env.EXAMPLE
 ### Set virtual env:
 
 ```python -m venv venv```
