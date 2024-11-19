@@ -70,8 +70,25 @@ def get_logs():
         print(f"Error: {e}")
 
 
+def get_services():
+    print("/api/services")
+
+    try:
+        response = requests.get(f"{BASE_URL}/api/services", headers=HEADERS)
+
+        response.raise_for_status()
+
+        data = response.json()
+
+        #print(data)
+        for service in data:
+            print(f"{service['domain']} : {service['services']}\n")
+    except requests.exceptions.RequestException as e:
+        print(f"Error: {e}")
+
 if __name__ == "__main__":
     api_health()
     get_states()
     get_events()
     get_logs()
+    get_services()
