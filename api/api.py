@@ -54,7 +54,24 @@ def get_events():
     except requests.exceptions.RequestException as e:
         print(f"Error: {e}")
 
+def get_logs():
+    print("\n/api/logbook\n")
+
+    try:
+        response = requests.get(f"{BASE_URL}/api/logbook", headers=HEADERS)
+
+        response.raise_for_status()
+
+        data = response.json()
+
+        for log in data:
+            print(f" {log['name']} : {log['when']}\n")
+    except requests.exceptions.RequestException as e:
+        print(f"Error: {e}")
+
+
 if __name__ == "__main__":
     api_health()
     get_states()
     get_events()
+    get_logs()
