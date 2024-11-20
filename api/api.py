@@ -27,6 +27,7 @@ def api_health():
         print(f"Error: {e}")
 
 def get_states():
+    print("/api/states\n")
     try:
         response = requests.get(f"{BASE_URL}/api/states", headers=HEADERS)
 
@@ -38,6 +39,51 @@ def get_states():
             print(f" {state['entity_id']} : {state['state']}")
     except requests.exceptions.RequestException as e:
         print(f"Error: {e}")
+
+
+
+# test on specific lamps, which are connected
+def get_lamp_state():
+    print("\n/api/states/light.keittio_1\n")
+
+    try:
+        response = requests.get(f"{BASE_URL}/api/states/light.keittio_1", headers=HEADERS)
+        response.raise_for_status()
+        data = response.json()
+        for state in data:
+            print(state)
+    except requests.exceptions.RequestException as e:
+        print(f"Error: {e}")
+
+def set_lamp_off():
+    print("\n/api/lamp/turn_off\n")
+
+    payload = {
+        "entity_id" : "light.keittio_1"
+    }
+
+    response = requests.post(f"{BASE_URL}/api/services/light/turn_off", headers=HEADERS, json=payload)
+
+    if response.status_code == 200:
+        print("Light turned off")
+    else:
+        print("error")
+        print(response.status_code)
+
+def set_lamp_on():
+    print("\n/api/lamp/turn_on\n")
+
+    payload = {
+        "entity_id" : "light.keittio_1"
+    }
+
+    response = requests.post(f"{BASE_URL}/api/services/light/turn_on", headers=HEADERS, json=payload)
+
+    if response.status_code == 200:
+        print("Light turned on")
+    else:
+        print("error")
+        print(response.status_code)
 
 
 def get_events():
@@ -86,9 +132,26 @@ def get_services():
     except requests.exceptions.RequestException as e:
         print(f"Error: {e}")
 
+
+def get_errors():
+    print("/api/error_log\n")
+
+    try:
+        response = requests.get(f"{BASE_URL}/api/error_log", headers=HEADERS)
+
+        response.raise_for_status()
+
+        print(response.text)
+    except requests.exceptions.RequestException as e:
+        print(f"Error: {e}")
+
 if __name__ == "__main__":
     api_health()
     get_states()
-    get_events()
-    get_logs()
+    get_lamp_state()
+    #set_lamp_off()
+    set_lamp_on()
+    #get_events()
+    #get_logs()
     get_services()
+    get_errors()
