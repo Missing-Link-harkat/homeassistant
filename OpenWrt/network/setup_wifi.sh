@@ -2,7 +2,7 @@
 
 # Get radio device name. (eg. 'radio0' on raspberry pi 4.)
 get_radio_device() {
-    radio_device=$(ubus call wireless info | grep -o 'radio[0-9]\+' | head -n 1)
+    radio_device=$(ubus call network.wireless status | grep -o '"radio[0-9]"' | tr -d '"')
     echo "$radio_device"
 }
 
@@ -19,7 +19,7 @@ create_wifi_network() {
     fi
 
     cat <<EOF >> ./test
-config wifi-iface
+config wifi-iface '$radio_device'
     option device '$radio_device'     # Radio device to make network
     option network '$network_name'    # network to associate with (lan)
     option mode 'ap'                  # Access point mode
