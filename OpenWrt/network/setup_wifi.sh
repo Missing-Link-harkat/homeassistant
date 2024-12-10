@@ -21,7 +21,7 @@ configure_radio() {
     uci set wireless."$radio_device".country="$country_code"
     uci set wireless."$radio_device".channel="$channel"
     uci set wireless."$radio_device".hwmode='11g'   #802.11g standard
-    uci set wireless."$radio_device".htmode='HT20'  # Channel width
+    uci set wireless."$radio_device".htmode='HT20'  # Channel width (20Mhz)
     uci set wireless."$radio_device".band='2g'      # 2.4 Ghz band
     uci set wireless."$radio_device".disabled='0'   # 0 == enabled, 1 = disabled
 
