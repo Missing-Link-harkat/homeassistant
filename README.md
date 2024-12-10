@@ -3,6 +3,7 @@ ICT-alan kehitysprojekti kurssin repo
 
 
 ### OpenWrt muistio:
+#### OpenWRT 23.05 versio
 #### SSH secure copy:
 opkg update\
 opkg install openssh-sftp-server
