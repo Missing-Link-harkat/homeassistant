@@ -1,0 +1,12 @@
+services:
+  homeassistant:
+    container_name: homeassistant
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    volumes:
+      - ./homeassistant:/config
+      - /run/dbus:/run/dbus:ro
+    environment:
+      - TZ=Europe/Helsinki
+    restart: unless-stopped
+    privileged: true
+    network_mode: host

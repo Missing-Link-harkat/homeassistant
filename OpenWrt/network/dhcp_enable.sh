@@ -1,4 +1,6 @@
-# Enable DHCP to get ip address from router
+#!/bin/sh
+
+# Set lan interface act as DHCP client
 
 uci set network.lan.proto="dhcp"
 uci commit network
