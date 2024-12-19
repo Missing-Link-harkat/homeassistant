@@ -1,77 +1,107 @@
-from scapy.all import sniff, IP, TCP, UDP
+import os
 import signal
 import sys
+import sqlite3
 
-MAX_LOG_LINES = 250
-LOG_FILE_PATH = "/root/traffic_log.txt"
+LOG_FILE_PATH = "/root/traffic_log.txt"  # Path to the combined log file
+HA_LOG_FILE_PATH = "/config/home-assistant.log"  # Path to the Home Assistant log file
+HA_DB_FILE_PATH = "/config/home-assistant_v2.db"  # Path to the Home Assistant SQLite database
 
 running = True
 
 def signal_handler(sig, frame):
     global running
-    print("\nStopping packet sniffing...")
+    print("\nStopping log monitoring...")
     running = False
 
-def filter_traffic(packet):
-    """Filter outgoing traffic from Home Assistant running in a Docker container."""
+def get_last_position():
+    """Get the last read position of the Home Assistant log file."""
     try:
-        # Check if the packet has an IP layer
-        if IP in packet:
-            # Get the source IP and port
-            src_ip = packet[IP].src
-            dst_ip = packet[IP].dst
-            if TCP in packet or UDP in packet:
-                layer = TCP if TCP in packet else UDP
-                src_port = packet[layer].sport
-                dst_port = packet[layer].dport
+        if os.path.exists(LOG_FILE_PATH + ".pos"):
+            with open(LOG_FILE_PATH + ".pos", "r") as pos_file:
+                return int(pos_file.read().strip())
+    except Exception as e:
+        print(f"Error reading position file: {e}")
+    return 0
 
-                # Customize this condition to match your Home Assistant container's IP
-                home_assistant_ip = "192.168.1.1"
+def save_last_position(position):
+    """Save the last read position of the Home Assistant log file."""
+    try:
+        with open(LOG_FILE_PATH + ".pos", "w") as pos_file:
+            pos_file.write(str(position))
+    except Exception as e:
+        print(f"Error saving position file: {e}")
 
-                if src_ip == home_assistant_ip:
-                    log_entry = f"Outgoing traffic: {src_ip}:{src_port} -> {dst_ip}:{dst_port}\n"
-                    print(log_entry)
+def log_new_entries():
+    """Log new entries from the Home Assistant log file."""
+    try:
+        last_position = get_last_position()
 
-                    # Append the log entry to a file
-                    with open(LOG_FILE_PATH, "a") as log_file:
-                        log_file.write(log_entry)
+        if os.path.exists(HA_LOG_FILE_PATH):
+            with open(HA_LOG_FILE_PATH, "r") as ha_log_file:
+                ha_log_file.seek(last_position)  # Move to the last read position
 
-                    # Check the file size and truncate if necessary
-                    maintain_log_size()
+                with open(LOG_FILE_PATH, "a") as log_file:
+                    for line in ha_log_file:
+                        log_file.write(line)
+                        print(line.strip())
+
+                # Save the new position
+                save_last_position(ha_log_file.tell())
+        else:
+            print(f"Home Assistant log file not found at {HA_LOG_FILE_PATH}")
 
     except Exception as e:
-        print(f"Error processing packet: {e}")
+        error_message = f"Error reading Home Assistant log file: {e}\n"
+        with open(LOG_FILE_PATH, "a") as log_file:
+            log_file.write(error_message)
+        print(error_message)
 
-def maintain_log_size():
-    """Keep the log file size under control by truncating it after a certain number of lines."""
+def query_ha_db():
+    """Query the Home Assistant SQLite database for recent state changes."""
     try:
-        with open(LOG_FILE_PATH, "r") as log_file:
-            lines = log_file.readlines()
+        if os.path.exists(HA_DB_FILE_PATH):
+            conn = sqlite3.connect(HA_DB_FILE_PATH)
+            cursor = conn.cursor()
 
-        if len(lines) > MAX_LOG_LINES:
-            # Keep only the last MAX_LOG_LINES lines
-            with open(LOG_FILE_PATH, "w") as log_file:
-                log_file.writelines(lines[-MAX_LOG_LINES:])
+            # Query the last 10 state changes
+            cursor.execute("""
+                SELECT entity_id, state, last_changed 
+                FROM states 
+                ORDER BY last_changed DESC 
+                LIMIT 10
+            """)
 
-    except FileNotFoundError:
-        # If the file doesn't exist yet, there's nothing to truncate
-        pass
+            state_changes = cursor.fetchall()
+
+            with open(LOG_FILE_PATH, "a") as log_file:
+                log_file.write("\n=== Latest State Changes in Home Assistant ===\n")
+                for entity_id, state, last_changed in state_changes:
+                    log_entry = f"Entity: {entity_id}, State: {state}, Last Changed: {last_changed}\n"
+                    log_file.write(log_entry)
+                    print(log_entry)
+
+            conn.close()
+        else:
+            print(f"Home Assistant database not found at {HA_DB_FILE_PATH}")
+
+    except Exception as e:
+        error_message = f"Error querying Home Assistant database: {e}\n"
+        with open(LOG_FILE_PATH, "a") as log_file:
+            log_file.write(error_message)
+        print(error_message)
 
 def main():
     global running
-    print("Monitoring outgoing traffic from Home Assistant Docker container...")
+    print("Tracking Home Assistant log and database changes...")
 
     # Handle graceful shutdown
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
 
-    # Replace 'docker0' with your Docker network interface (default is 'docker0')
-    interface = "docker0"
-
-    # Start sniffing packets
     while running:
-        sniff(iface=interface, prn=filter_traffic, store=False, stop_filter=lambda x: not running)
+        log_new_entries()
+        query_ha_db()
 
 if __name__ == "__main__":
     main()
-
