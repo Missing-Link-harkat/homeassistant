@@ -1,7 +1,7 @@
 #!/bin/sh
 
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
-echo "$SCRIPT_DIR"
+
 # Make sure necessary packages are installed
 opkg update
 opkg install parted tune2fs resize2fs
