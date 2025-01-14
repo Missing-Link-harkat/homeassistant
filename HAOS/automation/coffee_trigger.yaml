@@ -1,0 +1,19 @@
+alias: " Coffee power plug disable at 6pm."
+description: ""
+triggers:
+  - trigger: time
+    at: "18:00:00"
+conditions:
+  - condition: time
+    weekday:
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+actions:
+  - type: turn_off
+    device_id: 210738da1d2500ff39284f47e1531348
+    entity_id: 9280678fe02782661e988a77bec97e76
+    domain: switch
+mode: single
