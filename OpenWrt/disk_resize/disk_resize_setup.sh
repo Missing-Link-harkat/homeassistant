@@ -6,11 +6,12 @@ SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 opkg update
 opkg install parted tune2fs resize2fs
 
-#echo "$SCRIPT_DIR/disk_resize_finalize.sh" >> /etc/rc.local
+# Make disk_resize_finalize to run on reboot
 sed -i "/exit 0/i \\
 $SCRIPT_DIR/disk_resize_finalize.sh" /etc/rc.local
 
 # Resize
+# Todo: get available space and put that to parted command instead having hardcoded size of 29G.
 #parted /dev/mmcblk0p2 --script -- resizepart 2 32GB
 parted --script /dev/mmcblk0 resizepart 2 29G
 

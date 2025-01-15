@@ -1,5 +1,5 @@
-# missinglink
-ICT-alan kehitysprojekti kurssin repo
+# Homeassistant
+Homeassistant automation system running on OpenWRT.
 
 
 ### OpenWrt muistio:
