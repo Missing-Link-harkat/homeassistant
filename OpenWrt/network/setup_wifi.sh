@@ -42,7 +42,7 @@ create_wifi_network() {
         exit 1
     fi
 
-# Remove default interface as that messes the config
+# Remove default interface as that messess up the config
 uci delete wireless.default_radio0
 uci commit wireless
 
