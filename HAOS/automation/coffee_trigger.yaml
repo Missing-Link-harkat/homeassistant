@@ -13,7 +13,7 @@ conditions:
       - fri
 actions:
   - type: turn_off
-    device_id: 210738da1d2500ff39284f47e1531348
-    entity_id: 9280678fe02782661e988a77bec97e76
+    device_id: DEVICE_ID_HERE
+    entity_id: ENTITY_ID_HERE
     domain: switch
 mode: single

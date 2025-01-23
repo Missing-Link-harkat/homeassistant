@@ -1,0 +1,14 @@
+alias: Uusi automaatio
+description: ""
+triggers:
+  - trigger: numeric_state
+    entity_id:
+      - sensor.dht11_humiditysensor
+    above: 33
+conditions: []
+actions:
+  - type: turn_on
+    device_id: DEVICE_ID_HERE
+    entity_id: ENTITY_ID_HERE
+    domain: switch
+mode: single
