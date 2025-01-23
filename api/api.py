@@ -146,12 +146,12 @@ def get_errors():
         print(f"Error: {e}")
 
 if __name__ == "__main__":
-    api_health()
-    get_states()
-    get_lamp_state()
+    #api_health()
+    #get_states()
+    #get_lamp_state()
     #set_lamp_off()
-    set_lamp_on()
+    #set_lamp_on()
     #get_events()
     #get_logs()
-    get_services()
-    get_errors()
+    #get_services()
+    #get_errors()
