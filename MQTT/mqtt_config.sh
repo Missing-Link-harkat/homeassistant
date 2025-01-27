@@ -2,16 +2,16 @@
 
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 
-#Check if docker installed
+# Check if docker installed
 if ! command -v docker &>/dev/null; then
     echo "Docker is not installed..."
+    echo "Please install docker before proceeding."
 
-    #./HAOS/docker_install.sh
     return 1
 fi
 
-# TODO:
-# Needed firewall + etc. config to make the broker available.
+
+# Needed port forward for port 1883
 uci add firewall redirect
 uci set firewall.@redirect[-1].name="Forward-MQTT-to-Docker"
 uci set firewall.@redirect[-1].src="wan"

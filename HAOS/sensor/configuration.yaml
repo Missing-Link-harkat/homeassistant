@@ -1,0 +1,11 @@
+mqtt:
+  sensor:
+    - name: "DHT11.HumiditySensor"
+      state_topic: "DHT11/01"
+      unique_id: "DHT11.HumiditySensor"
+      value_template: "{{value_json.humidity}}"
+
+    - name: "DHT11.TemperatureSensor"
+      state_topic: "DHT11/01"
+      unique_id: "DHT11.TemperatureSensor"
+      value_template: "{{value_json.temperature}}"
