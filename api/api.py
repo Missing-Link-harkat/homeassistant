@@ -15,30 +15,18 @@ HEADERS = {"Authorization": f"Bearer {TOKEN}"}
 
 
 def api_health():
-    try:
-        response = requests.get(f"{BASE_URL}/api/", headers=HEADERS)
-
-        response.raise_for_status()
-
-        data = response.json()
+        data = get_request(f"{BASE_URL}/api/", headers=HEADERS)
         print(f"message: {data['message']}\n")
-        
-    except requests.exceptions.RequestException as e:
-        print(f"Error: {e}")
 
 def get_states():
     print("/api/states\n")
-    try:
-        response = requests.get(f"{BASE_URL}/api/states", headers=HEADERS)
 
-        response.raise_for_status()
-
-        data = response.json()
+    data = get_request(f"{BASE_URL}/api/states", headers=HEADERS)
+    if data:
         print("Response JSON:")
         for state in data:
             print(f" {state['entity_id']} : {state['state']}")
-    except requests.exceptions.RequestException as e:
-        print(f"Error: {e}")
+
 
 
 
@@ -46,14 +34,10 @@ def get_states():
 def get_lamp_state():
     print("\n/api/states/light.keittio_1\n")
 
-    try:
-        response = requests.get(f"{BASE_URL}/api/states/light.keittio_1", headers=HEADERS)
-        response.raise_for_status()
-        data = response.json()
+    data = get_request(f"{BASE_URL}/api/states/light.keittio_1", headers=HEADERS)
+    if data:
         for state in data:
             print(state)
-    except requests.exceptions.RequestException as e:
-        print(f"Error: {e}")
 
 def set_lamp_off():
     print("\n/api/lamp/turn_off\n")
@@ -89,65 +73,49 @@ def set_lamp_on():
 def get_events():
     print("/API/EVENTS\n")
 
-    try:
-        response = requests.get(f"{BASE_URL}/api/events", headers=HEADERS)
-
-        response.raise_for_status()
-
-        data = response.json()
+    data = get_request(f"{BASE_URL}/api/events", headers=HEADERS)
+    if data:
         for event in data:
             print(f" {event['event']} : {event['listener_count']}\n")
-    except requests.exceptions.RequestException as e:
-        print(f"Error: {e}")
 
 def get_logs():
     print("\n/api/logbook\n")
 
-    try:
-        response = requests.get(f"{BASE_URL}/api/logbook", headers=HEADERS)
+    data = get_request(f"{BASE_URL}/api/logbook", headers=HEADERS)
 
-        response.raise_for_status()
-
-        data = response.json()
-
+    if data:
         for log in data:
             print(f" {log['name']} : {log['when']}\n")
-    except requests.exceptions.RequestException as e:
-        print(f"Error: {e}")
 
 
 def get_services():
     print("/api/services")
 
-    try:
-        response = requests.get(f"{BASE_URL}/api/services", headers=HEADERS)
 
-        response.raise_for_status()
+    data = get_request(f"{BASE_URL}/api/services", headers=HEADERS)
 
-        data = response.json()
-
-        #print(data)
+    #print(data)
+    if data:
         for service in data:
             print(f"{service['domain']} : {service['services']}\n")
-    except requests.exceptions.RequestException as e:
-        print(f"Error: {e}")
 
 
 def get_errors():
     print("/api/error_log\n")
 
+    print(get_request(f"{BASE_URL}/api/error_log", headers=HEADERS))
+
+def get_request(url, headers):
     try:
-        response = requests.get(f"{BASE_URL}/api/error_log", headers=HEADERS)
-
+        response = requests.get(url, headers=headers)
         response.raise_for_status()
-
-        print(response.text)
+        return response.json()
     except requests.exceptions.RequestException as e:
-        print(f"Error: {e}")
+        print(f"Error {e}")
 
 if __name__ == "__main__":
-    #api_health()
-    #get_states()
+    api_health()
+    get_states()
     #get_lamp_state()
     #set_lamp_off()
     #set_lamp_on()
