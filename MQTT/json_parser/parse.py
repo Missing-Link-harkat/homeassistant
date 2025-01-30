@@ -1,7 +1,7 @@
 import os
 import json
 import paho.mqtt.client as mqtt
-import random
+import requests
 
 from dotenv import load_dotenv
 
@@ -13,6 +13,8 @@ MQTT_TOPIC = os.getenv("MQTT_TOPIC")
 HOME_ASSISTANT_API = os.getenv("HOME_ASSISTANT_URL")
 HOME_ASSISTANT_TOKEN = os.getenv("HOME_ASSISTANT_TOKEN")
 
+HEADERS = {"Authorization": f"Bearer {HOME_ASSISTANT_TOKEN}",
+           "Content-Type": "application/json"}
 
 def on_subscribe(client, userdata, mid, reason_code_list, properties):
     if reason_code_list[0].is_failure:
@@ -32,10 +34,12 @@ def on_unsubscribe(client, userdata, mid, reason_code_list, properties):
 def on_message(client, userdata, message):
     print(message.payload)
     try:
-        payload = message.payload.decode('utf-8')
+        payload = message.payload.decode('utf-8').strip()
+
+
 
         json_data = json.loads(payload)
-        print(json_data)
+        parse_data(json_data)
 
     except json.JSONDecodeError as e:
         print("Error decoding JSON")
@@ -50,6 +54,42 @@ def on_connect(client, userdata, flags, reason_code, properties):
         # we should always subscribe from on_connect callback to be sure
         # our subscribed is persisted across reconnections.
         client.subscribe(MQTT_TOPIC)
+
+
+def parse_data(json_data):
+    try:
+        weather_data = json_data.get('weatherData', [])
+        print("WEATHER DATA\n")
+        print(weather_data)
+        price_data = json_data.get('priceData', [])
+
+        for weather in weather_data:
+            time = weather['dateTime']
+            temperature = weather['temperature']
+
+            entity_id = f"weather_temperature_{time.replace(':', '_').replace(' ', '_')}"
+            create_weather_sensor(entity_id, temperature, time)
+
+    except Exception as e:
+        print(f"Error parsing message: {e}")
+
+
+def create_weather_sensor(entity_id, temperature, time):
+    url = f"{HOME_ASSISTANT_API}/api/states/sensor.{entity_id}"
+
+    payload = {
+        "state": temperature,
+        "attributes": {
+            "friendly_name": f"Weather Temperature at {time}",
+            "temperature": temperature,
+            "forecast_time": time,
+            "unit_of_measurement": "°C"
+        }
+    }
+    payload_json = json.dumps(payload)
+
+    response = requests.post(url, headers=HEADERS)
+    print(response)
 
 
 

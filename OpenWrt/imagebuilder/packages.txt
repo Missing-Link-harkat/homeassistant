@@ -1,5 +1,0 @@
-git
-openssh-sftp-server
-parted
-tune2fs
-resize2fs
