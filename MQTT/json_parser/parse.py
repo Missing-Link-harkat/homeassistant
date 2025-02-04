@@ -59,24 +59,32 @@ def on_connect(client, userdata, flags, reason_code, properties):
 def parse_data(json_data):
     try:
         weather_data = json_data.get('weatherData', [])
-        print("WEATHER DATA\n")
-        print(weather_data)
         price_data = json_data.get('priceData', [])
+
+        for price in price_data:
+            print("IS THERE ANYTHING")
+            print(price)
+            time = price['data']['dateTime']
+            price = price['data']['price']
+            entity_id = f"price.{time.replace(':', '_').replace(' ', '_').replace('/', '_')}"
+            create_price_seonsor(entity_id, price, time)
 
         for weather in weather_data:
             time = weather['dateTime']
             temperature = weather['temperature']
 
-            entity_id = f"weather_temperature_{time.replace(':', '_').replace(' ', '_')}"
+            entity_id = f"weather_temperature.{time.replace(':', '_').replace(' ', '_').replace('/', '_')}"
+            print(entity_id)
             create_weather_sensor(entity_id, temperature, time)
 
     except Exception as e:
         print(f"Error parsing message: {e}")
 
 
-def create_weather_sensor(entity_id, temperature, time):
-    url = f"{HOME_ASSISTANT_API}/api/states/sensor.{entity_id}"
 
+def create_weather_sensor(entity_id, temperature, time):
+    url = f"{HOME_ASSISTANT_API}/api/states/{entity_id}"
+    print(entity_id)
     payload = {
         "state": temperature,
         "attributes": {
@@ -86,12 +94,24 @@ def create_weather_sensor(entity_id, temperature, time):
             "unit_of_measurement": "°C"
         }
     }
-    payload_json = json.dumps(payload)
-
-    response = requests.post(url, headers=HEADERS)
+    print("NOW SENDING THE POST REQUEST")
+    response = requests.post(url, json=payload, headers=HEADERS)
     print(response)
 
-
+def create_price_seonsor(entity_id, price, time):
+    url = f"{HOME_ASSISTANT_API}/api/states/{entity_id}"
+    payload = {
+        "state": price,
+        "attributes": {
+            "friendly_name": time,
+            "price": price,
+            "time": time,
+            "unit_of_measurement": "€"
+        }
+    }
+    print("SENDING price data")
+    response = requests.post(url, json=payload, headers=HEADERS)
+    print(response)
 
 mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 mqttc.on_connect = on_connect
