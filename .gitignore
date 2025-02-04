@@ -2,3 +2,4 @@
 venv/
 homeassistant/
 mosquitto/
+__pycache__
