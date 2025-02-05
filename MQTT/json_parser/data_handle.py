@@ -1,5 +1,6 @@
 import os
 import requests
+from datetime import datetime
 
 from dotenv import load_dotenv
 
@@ -18,47 +19,68 @@ def parse_data(json_data):
         weather_data = json_data.get('weatherData', [])
         price_data = json_data.get('priceData', [])
 
-        for price in price_data:
-            print(price)
-            time = price['data']['dateTime']
-            price = price['data']['price']
-            entity_id = f"price.{time.replace(':', '_').replace(' ', '_').replace('/', '_')}"
-            create_price_seonsor(entity_id, price, time)
+        price_entity_id =  "price.forecast"
+        create_price_seonsor(price_entity_id, price_data)
+        #for price in price_data:
+            #print(price)
+            #time = price['data']['dateTime']
+            #price = price['data']['price']
+            #entity_id = f"price.{time.replace(':', '_').replace(' ', '_').replace('/', '_')}"
+            #create_price_seonsor(entity_id, price, time)
 
-        for weather in weather_data:
-            time = weather['dateTime']
-            temperature = weather['temperature']
+        #for weather in weather_data:
+         #   time = weather['dateTime']
+         #   temperature = weather['temperature']
 
-            entity_id = f"weather_temperature.{time.replace(':', '_').replace(' ', '_').replace('/', '_')}"
-            print(entity_id)
-            create_weather_sensor(entity_id, temperature, time)
+        #    entity_id = f"weather_temperature.{time.replace(':', '_').replace(' ', '_').replace('/', '_')}"
+        #    
+        # print(entity_id)
+        entity_id = "weather.forecast"
+        create_weather_sensor(entity_id, weather_data)
     
     except Exception as e:
         print(f"Error parsing message: {e}")
 
-
-def create_weather_sensor(entity_id, temperature, time):
+                          #entity_id, temperature, time
+def create_weather_sensor(entity_id, weather_data):
     url = f"{HOME_ASSISTANT_API}/api/states/{entity_id}"
-    print(entity_id)
+
+    iso_dates = [convert_to_iso(weather['dateTime']) for weather in weather_data]
+   
     payload = {
-        "state": temperature,
+        "state": weather_data[0]['temperature'],
         "attributes": {
-            "friendly_name": f"Weather Temperature at {time}",
-            "temperature": temperature,
-            "forecast_time": time,
-            "unit_of_measurement": "°C"
+            "friendly_name": f"Weather Temperature Forecast",
+            "unit_of_measurement": "°C",
+            "forecast_times": iso_dates,
+            "forecast_temperatures": [weather['temperature'] for weather in weather_data]
         }
     }
+    print("WEATHER DATAAAAAA iso dates")
+    print(iso_dates)
+   
+   #payload = {
+    #    "state": temperature,
+    #    "attributes": {
+    #        "friendly_name": f"Weather Temperature at {time}",
+    #        "temperature": temperature,
+    #        "forecast_time": time,
+    #        "unit_of_measurement": "°C"
+    #    }
+    #}
+
     send_request(url, payload)
 
-def create_price_seonsor(entity_id, price, time):
+def create_price_seonsor(entity_id, price_data):
     url = f"{HOME_ASSISTANT_API}/api/states/{entity_id}"
+    iso_dates = [convert_to_iso(price['data']['dateTime']) for price in price_data]
+    
     payload = {
-        "state": price,
+        "state": price_data[0]['data']['price'],
         "attributes": {
-            "friendly_name": time,
-            "price": price,
-            "time": time,
+            "friendly_name": "Prices:",
+            "price": [price['data']['price'] for price in price_data],
+            "time": iso_dates,
             "unit_of_measurement": "€"
         }
     }
@@ -68,3 +90,7 @@ def send_request(url, payload):
     print("SENDING DATA")
     response = requests.post(url, json=payload, headers=HEADERS)
     print(response)
+
+def convert_to_iso(date_time_str):
+    date_time_obj = datetime.strptime(date_time_str, "%d/%m/%Y %H:%M")
+    return date_time_obj.isoformat()
