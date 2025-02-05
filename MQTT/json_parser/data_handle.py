@@ -18,9 +18,13 @@ def parse_data(json_data):
     try:
         weather_data = json_data.get('weatherData', [])
         price_data = json_data.get('priceData', [])
+        relay_data = json_data.get('relayData', [])
 
         price_entity_id =  "price.forecast"
-        create_price_seonsor(price_entity_id, price_data)
+        create_price_sensor(price_entity_id, price_data)
+
+        relay_entity_id = "relay.data"
+        create_relay_sensor(relay_entity_id, relay_data)
         #for price in price_data:
             #print(price)
             #time = price['data']['dateTime']
@@ -71,7 +75,7 @@ def create_weather_sensor(entity_id, weather_data):
 
     send_request(url, payload)
 
-def create_price_seonsor(entity_id, price_data):
+def create_price_sensor(entity_id, price_data):
     url = f"{HOME_ASSISTANT_API}/api/states/{entity_id}"
     iso_dates = [convert_to_iso(price['data']['dateTime']) for price in price_data]
     
@@ -85,6 +89,10 @@ def create_price_seonsor(entity_id, price_data):
         }
     }
     send_request(url, payload)
+
+def create_relay_sensor(entity_id, relay_data):
+    url = url = f"{HOME_ASSISTANT_API}/api/states/{entity_id}"
+
 
 def send_request(url, payload):
     print("SENDING DATA")
