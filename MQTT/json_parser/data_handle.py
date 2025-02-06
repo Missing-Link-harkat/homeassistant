@@ -21,10 +21,12 @@ def parse_data(json_data):
         relay_data = json_data.get('relayData', [])
 
         price_entity_id =  "price.forecast"
-        create_price_sensor(price_entity_id, price_data)
+        #create_price_sensor(price_entity_id, price_data)
 
         relay_entity_id = "relay.data"
         create_relay_sensor(relay_entity_id, relay_data)
+
+
         #for price in price_data:
             #print(price)
             #time = price['data']['dateTime']
@@ -40,7 +42,7 @@ def parse_data(json_data):
         #    
         # print(entity_id)
         entity_id = "weather.forecast"
-        create_weather_sensor(entity_id, weather_data)
+        #create_weather_sensor(entity_id, weather_data)
     
     except Exception as e:
         print(f"Error parsing message: {e}")
@@ -49,19 +51,17 @@ def parse_data(json_data):
 def create_weather_sensor(entity_id, weather_data):
     url = f"{HOME_ASSISTANT_API}/api/states/{entity_id}"
 
-    iso_dates = [convert_to_iso(weather['dateTime']) for weather in weather_data]
+    #iso_dates = [convert_to_iso(weather['dateTime']) for weather in weather_data]
    
     payload = {
         "state": weather_data[0]['temperature'],
         "attributes": {
             "friendly_name": f"Weather Temperature Forecast",
             "unit_of_measurement": "°C",
-            "forecast_times": iso_dates,
+            "forecast_times": weather_data['dateTime'],
             "forecast_temperatures": [weather['temperature'] for weather in weather_data]
         }
     }
-    print("WEATHER DATAAAAAA iso dates")
-    print(iso_dates)
    
    #payload = {
     #    "state": temperature,
@@ -91,7 +91,25 @@ def create_price_sensor(entity_id, price_data):
     send_request(url, payload)
 
 def create_relay_sensor(entity_id, relay_data):
-    url = url = f"{HOME_ASSISTANT_API}/api/states/{entity_id}"
+
+    #url = f"{HOME_ASSISTANT_API}/api/states/{entity_id}"
+
+    
+    print("DO I RUN CREATE RELAY SENSOR")
+    for relay in relay_data:
+        print(relay)
+        url = f"{HOME_ASSISTANT_API}/api/states/{f"relay.{relay['relay_name']}"}"
+        payload = {
+            "state": relay,
+            "attributes": {
+                "friendly_name": "isOpen:",
+                "mode": relay['mode'],
+                "isOpen": relay['isOpen'],
+                "price_threshold": relay['price_threshold'],
+                "price_multiplier": relay['price_multiplier']
+            }
+        }
+        send_request(url, payload)
 
 
 def send_request(url, payload):
