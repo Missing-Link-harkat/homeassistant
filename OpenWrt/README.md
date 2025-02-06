@@ -1,5 +1,5 @@
 ### OpenWrt muistio:
-#### OpenWRT 23.05 versio
+#### OpenWRT 23.05 (EXT 4 ver.)
 #### SSH secure copy:
 opkg update\
 opkg install openssh-sftp-server

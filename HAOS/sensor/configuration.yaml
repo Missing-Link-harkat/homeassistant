@@ -1,11 +1,59 @@
+
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
 mqtt:
   sensor:
-    - name: "DHT11.HumiditySensor"
+    - name: "Huone 2 HumiditySensor"
       state_topic: "DHT11/01"
+      unit_of_measurement: "%"
       unique_id: "DHT11.HumiditySensor"
       value_template: "{{value_json.humidity}}"
 
-    - name: "DHT11.TemperatureSensor"
+    - name: "Huone 2 TemperatureSensor"
       state_topic: "DHT11/01"
+      unit_of_measurement: "C"
       unique_id: "DHT11.TemperatureSensor"
       value_template: "{{value_json.temperature}}"
+
+    - name: "Huone 1 TemperatureSensor"
+      state_topic: "BMP280/01"
+      unit_of_measurement: "C"
+      unique_id: "BMP280.Temperature"
+      value_template: "{{value_json.temperature}}"
+
+    - name: "Huone 1 PressureSensor"
+      state_topic: "BMP280/01"
+      unique_id: "BMP280.Pressure"
+      value_template: "{{value_json.pressure}}"
+
+    - name: "Huone 1 AltitudeSensor"
+      state_topic: "BMP280/01"
+      unique_id: "BMP280.Altitude"
+      value_template: "{{value_json.altitude}}"
+#mqtt:
+# sensor:
+#  - state_topic:"DHT11/01"
+#    name:"DHT11.HumiditySensor"
+#    unique_id:DHT11.Humidity
+#    value_template:"{{ value_json.humidity }}" 
+
+#mqtt:
+#     sensor:
+#	-	state_topic:"DHT11/01"
+#		name:"DHT11.HumiditySensor"
+#		unique_id:DHT11.Humidity
+#		value_template:"{{ value_json.humidity }}"
+#
+#	-	state_topic:"DHT11/01"
+#		name:"DHT11.TemperatureSensor"
+#		unique_id:DHT11.Temperature
+#		value_template:"{{ value_json.temperature }}"
