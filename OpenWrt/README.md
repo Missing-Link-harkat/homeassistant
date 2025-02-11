@@ -1,5 +1,7 @@
 ### OpenWrt muistio:
-#### OpenWRT 23.05 (EXT 4 ver.)
+#### OpenWRT 24.10 (ext 4 ver.)
+#### Problems
+- disk resize
 #### SSH secure copy:
 opkg update\
 opkg install openssh-sftp-server
