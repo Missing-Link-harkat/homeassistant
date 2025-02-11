@@ -1,6 +1,8 @@
 import os
 import json
 import requests
+import signal
+import sys
 import paho.mqtt.client as mqtt
 
 from data_handle import parse_data
@@ -13,7 +15,6 @@ MQTT_BROKER = os.getenv("MQTT_BROKER")
 MQTT_TOPIC = os.getenv("MQTT_TOPIC")
 HOME_ASSISTANT_API = os.getenv("HOME_ASSISTANT_URL")
 HOME_ASSISTANT_TOKEN = os.getenv("HOME_ASSISTANT_TOKEN")
-
 
 def on_subscribe(client, userdata, mid, reason_code_list, properties):
     if reason_code_list[0].is_failure:
@@ -52,14 +53,47 @@ def on_connect(client, userdata, flags, reason_code, properties):
         # our subscribed is persisted across reconnections.
         client.subscribe(MQTT_TOPIC)
 
+def on_disconnect(client, userdata, rc, properties, reason_string):
+    client_disconnecting = userdata.get('client_disconnecting', False)
+
+    if client_disconnecting:
+        print("Disconnected gracefully by client request.")
+    else:
+        print(f"Disconnected with return code {rc} and reason: {reason_string}")
+        if rc != 0:
+            print("Attempting to reconnect...")
 
 
+# Make sure the client disconnects properly
+def graceful_shutdown(signal, frame):
+    print("\nShutting down gracefully")
+    
+    client_data = mqttc.user_data_get()
+    client_data['client_disconnecting'] = True
+    mqttc.user_data_set(client_data)
+
+    mqttc.disconnect()
+    sys.exit(0)
+
+# Application terminate signal
+signal.signal(signal.SIGINT, graceful_shutdown)
+
+# MQTT client settings
 mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 mqttc.on_connect = on_connect
 mqttc.on_message = on_message
 mqttc.on_subscribe = on_subscribe
 mqttc.on_unsubscribe = on_unsubscribe
+mqttc.on_disconnect = on_disconnect
 
-mqttc.user_data_set([])
-mqttc.connect(MQTT_BROKER)
+mqttc.reconnect_delay_set(min_delay=1, max_delay=120) 
+mqttc.user_data_set({'client_disconnecting': False})
+
+# Handle initial connection failure
+try:
+    mqttc.connect(MQTT_BROKER)
+except Exception as e:
+    print("Initial connection failed... retrying")
+
+
 mqttc.loop_forever()
