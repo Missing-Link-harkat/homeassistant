@@ -1,6 +1,7 @@
 import os
 import requests
 from datetime import datetime
+from requests.exceptions import RequestException, ConnectionError, Timeout
 
 from dotenv import load_dotenv
 
@@ -78,5 +79,14 @@ def create_relay_sensor(relay_data):
 
 def send_request(url, payload):
     print("SENDING DATA")
-    response = requests.post(url, json=payload, headers=HEADERS)
-    print(response)
+
+    try:
+
+        response = requests.post(url, json=payload, headers=HEADERS)
+        print(response)
+    except ConnectionError as e:
+        print(f"Connection error: {e}")
+    except Timeout as e:
+        print(f"Request timed out: {e}")
+    except RequestException as e:
+        print(f"An error occured {e}")
