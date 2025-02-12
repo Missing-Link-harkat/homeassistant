@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# This script creates a wifi network on OpenWrt device
+
 # Get radio device name. (eg. 'radio0' on raspberry pi 4.)
 get_radio_device() {
     radio_device=$(ubus call network.wireless status | grep -o '"radio[0-9]"' | tr -d '"')
