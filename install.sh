@@ -10,6 +10,9 @@ check_state() {
     if [ ! -f "$STATE_FILE" ]; then
         echo "Making STATE_FILE"
         echo "disk_resize" > "$STATE_FILE"
+        # Make this script run on boot
+        sed -i "/exit 0/i \\
+        $SCRIPT_DIR/install.sh" /etc/rc.local
     fi
 }
 
@@ -45,7 +48,6 @@ run_installation() {
 
     current_step=$(get_current_step)
     echo $current_step
-    echo "DO WE GET HERE"
     case "$current_step" in 
         "disk_resize")
             set_install_step "docker_install"
@@ -54,6 +56,9 @@ run_installation() {
         "docker_install")
             set_install_step "haos_install"
             $SCRIPT_DIR/HAOS/haos_install.sh
+            ;;
+        "finish")
+            sed -i "\|$SCRIPT_DIR/install.sh|d" /etc/rc.local
             ;;
     esac
 }
