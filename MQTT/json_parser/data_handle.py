@@ -10,6 +10,9 @@ load_dotenv()
 HOME_ASSISTANT_API = os.getenv("HOME_ASSISTANT_URL")
 HOME_ASSISTANT_TOKEN = os.getenv("HOME_ASSISTANT_TOKEN")
 
+if not HOME_ASSISTANT_API or not HOME_ASSISTANT_TOKEN:
+    raise ValueError("ENV VARIABLES NOT PROPERLY SET :(   ")
+
 
 HEADERS = {"Authorization": f"Bearer {HOME_ASSISTANT_TOKEN}",
            "Content-Type": "application/json"}
@@ -81,7 +84,6 @@ def send_request(url, payload):
     print("SENDING DATA")
 
     try:
-
         response = requests.post(url, json=payload, headers=HEADERS)
         print(response)
     except ConnectionError as e:

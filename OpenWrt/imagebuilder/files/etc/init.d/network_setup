@@ -1,0 +1,23 @@
+#!/bin/sh /etc/rc.common
+# Custom init script to configure network settings
+
+START=99
+
+start() {
+
+    if [ ! -f /etc/config/custom_boot_complete ]; then
+        echo "Running initial network configuration..." > /tmp/network_setup.log
+
+        uci set network.lan.proto="dhcp"
+        uci commit network
+
+        /etc/init.d/network restart
+
+        touch /etc/config/custom_boot_complete
+
+        echo "Network configuration applied" >> /tmp/network_setup.log
+    else
+        echo "Network configuration already applied, skipping." >> /tmp/custom_network_setup.log
+    fi
+    
+}

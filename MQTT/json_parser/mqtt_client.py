@@ -13,8 +13,9 @@ load_dotenv()
 
 MQTT_BROKER = os.getenv("MQTT_BROKER")
 MQTT_TOPIC = os.getenv("MQTT_TOPIC")
-HOME_ASSISTANT_API = os.getenv("HOME_ASSISTANT_URL")
-HOME_ASSISTANT_TOKEN = os.getenv("HOME_ASSISTANT_TOKEN")
+
+if not MQTT_BROKER or not MQTT_TOPIC:
+    raise ValueError("ENV VARIABLES NOT PROPERLY SET :(   ")
 
 def on_subscribe(client, userdata, mid, reason_code_list, properties):
     if reason_code_list[0].is_failure:
