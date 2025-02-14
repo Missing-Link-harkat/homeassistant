@@ -3,3 +3,8 @@ venv/
 homeassistant/
 mosquitto/
 __pycache__
+OpenWrt/imagebuilder/files/etc/rc.d/*
+!OpenWrt/imagebuilder/files/etc/rc.d/
+
+OpenWrt/imagebuilder/image/*
+!OpenWrt/imagebuilder/image/

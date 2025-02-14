@@ -1,12 +1,34 @@
 #!/bin/bash
 
-INIT_SCRIPT="/files/etc/init.d/network_setup"
+# Ensure proper usage
+if [ $# -lt 2 ]; then
+    echo "Usage: $0 <path_to_openwrt_imagebuilder_tar_or_extracted> <profile>"
+    exit 1
+fi
 
-if [ -f "$INIT_SCRIPT" ]; then
-  # Create the symlink in /etc/rc.d/
-  ln -s "$INIT_SCRIPT" /files/etc/rc.d/S99network-setup
-  echo "Symlink created for your-script at /files/etc/rc.d/S99network-setup"
+TAR_PATH=$1
+PROFILE=$2
+
+# Extract imagebuilder
+
+if [ -f $TAR_PATH ]; then
+    echo "Extracting OpenWrt ImageBUilder from tar.gz..."
+    tar -xvzf "$TAR_PATH" -C ./image
+elif [ -d $TAR_PATH ]; then
+    echo "Using existing extracted ImageBuilder from directory: $TAR_PATH"
+    cp -r "$TAR_PATH" ./image
 else
-  echo "Init script not found at $INIT_SCRIPT"
-  exit 1
+    echo "Invalid path for tar.gz or extracted OpenWrt ImageBuilder!"
+    exit 1
+fi
+
+# Build image
+cd ./image
+make image PROFILE="$PROFILE" FILES="../files"
+
+if [ $? -eq 0 ]; then
+    echo "Build completed successfully!"
+else
+    echo "Build failed."
+    exit 1
 fi
