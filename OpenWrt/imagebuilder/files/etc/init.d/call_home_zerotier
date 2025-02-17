@@ -1,0 +1,9 @@
+#!/bin/sh /etc/rc.common
+
+# Method to try and connect to a zerotier network
+
+START=99
+
+start() {
+
+}

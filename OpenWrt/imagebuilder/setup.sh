@@ -9,6 +9,7 @@ fi
 TAR_PATH=$1
 PROFILE=$2
 EXTRACTED_DIR=""
+
 # Extract imagebuilder
 if [ -f $TAR_PATH ]; then
     echo "Extracting OpenWrt ImageBUilder from tar.zst..."
