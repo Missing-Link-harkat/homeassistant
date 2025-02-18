@@ -3,6 +3,30 @@
 START=99
 
 start() {
+
+    TIMEOUT=30
+    INTERFACE="eth0"
+    COUNT=0
+
+    echo "Waiting for internet connection" > /tmp/package_setup.log
+    #while ! ip addr show dev $INTERFACE | grep -q "inet "; do
+    #    sleep 5
+    #    COUNT=$((COUNT +1))
+    #    if [ $COUNT -ge $TIMEOUT ]; then
+    #        echo "Timeout reached, did not get ip address in time" >> /tmp/package_setup.log
+    #        break
+    #    fi
+#
+#    done
+
+    # If network is up, continue with package installation
+   # if ip addr show dev $INTERFACE | grep -q "inet "; then
+    echo "Network is up, proceeding with package installation..." >> /tmp/package_setup.log
     opkg update
     opkg install openssh-sftp-server
+    echo "SSH server installed" >> /tmp/package_setup.log
+    #else
+    #    echo "Network not available, skipping package installation." >> /tmp/package_setup.log
+    #fi
+
 }

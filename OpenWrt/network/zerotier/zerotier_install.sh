@@ -1,11 +1,12 @@
 #!/bin/sh
 
-if [ -z "$1" ]; then
-    echo "Usage: $0 <Zerotier network id>"
+if [ $# -lt 2 ]; then
+    echo "Usage: $0 <Zerotier network id> <Whitelisted UUID from zerotier>"
     exit 1
 fi
 
 NETWORK_ID=$1
+UUID=$2
 
 opkg update
 opkg install zerotier

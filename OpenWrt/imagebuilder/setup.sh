@@ -29,7 +29,6 @@ fi
 
 
 # Build image
-#EXTRACTED_DIR=$(tar -I zstd -tf "$TAR_PATH" | head -n 1 | cut -f1 -d"/")
 cd ./image/$EXTRACTED_DIR/
 make image PROFILE="$PROFILE" FILES="../../files"
 

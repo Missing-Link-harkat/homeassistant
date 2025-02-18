@@ -11,8 +11,8 @@ get_radio_device() {
 # Configure radio device settings
 configure_radio() {
 
-    if [[ -z "$1" || -z "$2" ]]; then
-        echo "Not all parameters given"
+    if [ $# -lt 2 ]; then
+        echo "Usage: $0 <country_code> <channel>"
         exit 1
     fi
 
@@ -40,8 +40,8 @@ configure_radio() {
 # Sets up wifi-network with settings
 create_wifi_network() {
 
-    if [[ -z "$1" || -z "$2" || -z "$3" ]]; then
-        echo "Not all parameters given"
+    if [ $# -lt 3 ]; then
+        echo "Usage: $0 <SSID> <password> <network_name>"
         exit 1
     fi
 

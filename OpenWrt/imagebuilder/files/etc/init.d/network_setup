@@ -7,6 +7,7 @@ start() {
 
     if [ ! -f /etc/config/custom_boot_complete ]; then
         echo "Running initial network configuration..." > /tmp/network_setup.log
+        echo "test in this log does this changee" >> /tmp/network_setup.log
 
         uci set network.lan.proto="dhcp"
         uci commit network
