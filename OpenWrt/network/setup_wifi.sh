@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# This script creates a wifi network on OpenWrt device
+# This script creates a wifi network on OpenWrt device.
 
 # Get radio device name. (eg. 'radio0' on raspberry pi 4.)
 get_radio_device() {
@@ -10,6 +10,12 @@ get_radio_device() {
 
 # Configure radio device settings
 configure_radio() {
+
+    if [[ -z "$1" || -z "$2" ]]; then
+        echo "Not all parameters given"
+        exit 1
+    fi
+
     local country_code=$1
     local channel=$2
 
@@ -33,6 +39,12 @@ configure_radio() {
 
 # Sets up wifi-network with settings
 create_wifi_network() {
+
+    if [[ -z "$1" || -z "$2" || -z "$3" ]]; then
+        echo "Not all parameters given"
+        exit 1
+    fi
+
     local ssid=$1
     local password=$2
     local network_name=$3

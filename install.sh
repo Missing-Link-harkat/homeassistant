@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Install script to automate the whole install process.
+# Install script to automate the whole install process (Test)
 
 STATE_FILE="/etc/config/install_state"
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
