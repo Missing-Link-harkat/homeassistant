@@ -12,5 +12,18 @@ service network restart
 - flash to usb stick etc.
 - boot from usb and clone
 ``` 
-dd if=/dev/sdb of=/dev/sda
+dd if=/dev/sdb of=/dev/sda bs=1M
+```
+check PCI devices
+```
+opkg install pciutils
+```
+```
+lspci
+```
+
+
+wifi driver (specific to device)
+```
+opkg install rtl8821ce-firmware
 ```
