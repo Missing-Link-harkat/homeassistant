@@ -7,3 +7,10 @@ opkg install openssh-sftp-server
 uci set network.lan.proto="dhcp"\
 uci commit network\
 service network restart
+### x86 install memo (initial)
+- Get x86 image (etx 4)
+- flash to usb stick etc.
+- boot from usb and clone
+``` 
+dd if=/dev/sdb of=/dev/sda
+```

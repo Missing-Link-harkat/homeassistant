@@ -28,7 +28,20 @@ def get_states():
             print(f" {state['entity_id']} : {state['state']}")
 
 
+def get_state_altitude():
+    print("\nsensor.huone_1_altitudesensor\n")
+    data = get_request(f"{BASE_URL}/api/states/sensor.huone_1_altitudesensor", headers=HEADERS)
+    if data:
+        print("Response JSON:\n")
+        print(f"{data}")
 
+
+def get_state_relay():
+    print("\nrelay 0\n")
+    data = get_request(f"{BASE_URL}/api/states/relay.relay_0", headers=HEADERS)
+    if data:
+        print("Response JSON:\n")
+        print(f"{data}")
 
 # test on specific lamps, which are connected
 def get_lamp_state():
@@ -116,6 +129,8 @@ def get_request(url, headers):
 if __name__ == "__main__":
     api_health()
     get_states()
+    get_state_altitude()
+    get_state_relay()
     #get_lamp_state()
     #set_lamp_off()
     #set_lamp_on()
