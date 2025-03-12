@@ -6,5 +6,7 @@ __pycache__
 OpenWrt/imagebuilder/files/etc/rc.d/*
 !OpenWrt/imagebuilder/files/etc/rc.d/
 
+certs/
+
 OpenWrt/imagebuilder/image/*
 !OpenWrt/imagebuilder/image/
