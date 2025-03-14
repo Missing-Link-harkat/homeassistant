@@ -10,7 +10,6 @@ if ! command -v docker &>/dev/null; then
     return 1
 fi
 
-
 # Port forward 1883
 uci add firewall redirect
 uci set firewall.@redirect[-1].name="Forward-MQTT-to-Docker-1883"
@@ -34,19 +33,17 @@ uci set firewall.@redirect[-1].target="DNAT"
 uci commit firewall
 /etc/init.d/firewall reload
 
-mkdir -p ./mosquitto/config/certs
+# Build and launch container with minimal config
 cp mosquitto.conf ./mosquitto/config/mosquitto.conf
-
-# Create cert and copy needed files
-./cert/create_cert.sh
-cp ./certs/ca.crt ./mosquitto/config/certs/ca.crt
-cp ./certs/server.crt ./mosquitto/config/certs/server.crt
-cp ./certs/server.key ./mosquitto/config/certs/server.key
-# Launch container
 docker build --network host -t mosquitto_with_openssl .
 docker-compose -f ./mqttcompose.yml up -d
 
-# Configure container
+
+#### Configure the container
+
+
+# Configure username and password authentication
+
 CONFIG_FILE="./mosquitto/config/mosquitto.conf"
 
 # Setup credential authentication
@@ -62,3 +59,15 @@ PASSWORD_FILE="/mosquitto/config/mosquitto.passwd"
 INITIAL_USER="admin"
 
 docker exec -it ${CONTAINER_NAME} sh -c "mosquitto_passwd -c ${PASSWORD_FILE} ${INITIAL_USER}"
+
+# Make SSL/TLS cert
+
+# Create certificates
+cp cert/create_cert.sh ./mosquitto/create_cert.sh
+docker exec -it ${CONTAINER_NAME} sh ./create_cert.sh
+
+
+# File paths for needed cert files
+sed -i '/^#cafile /mosquitto/config/certs/ca.crt/s/^#//' "$CONFIG_FILE"  # Uncomment '#cafile /mosquitto/config/certs/ca.crt'
+sed -i '/^#certfile /mosquitto/config/certs/server.crt/s/^#//' "$CONFIG_FILE"  # Uncomment '#certfile /mosquitto/config/certs/server.crt'
+sed -i '/^#keyfile /mosquitto/config/certs/server.key/s/^#//' "$CONFIG_FILE"  # Uncomment '#keyfile /mosquitto/config/certs/server.key'
