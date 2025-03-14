@@ -43,6 +43,7 @@ cp ./certs/ca.crt ./mosquitto/config/certs/ca.crt
 cp ./certs/server.crt ./mosquitto/config/certs/server.crt
 cp ./certs/server.key ./mosquitto/config/certs/server.key
 # Launch container
+docker build --network host -t mosquitto_with_openssl .
 docker-compose -f ./mqttcompose.yml up -d
 
 # Configure container
