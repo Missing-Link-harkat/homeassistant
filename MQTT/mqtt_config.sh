@@ -35,7 +35,6 @@ uci commit firewall
 
 # Build and launch container with minimal config
 mkdir -p mosquitto/config/certs
-
 cp mosquitto.conf ./mosquitto/config/mosquitto.conf
 docker build --network host -t mosquitto_with_openssl .
 docker-compose -f ./mqttcompose.yml up -d
@@ -65,7 +64,7 @@ docker exec -it ${CONTAINER_NAME} sh -c "mosquitto_passwd -c ${PASSWORD_FILE} ${
 # Make SSL/TLS cert
 
 # Create certificates
-cp cert/create_cert.sh ./mosquitto/create_cert.sh
+cp scripts/create_cert.sh ./mosquitto/create_cert.sh
 docker exec -it ${CONTAINER_NAME} sh ./create_cert.sh
 
 
