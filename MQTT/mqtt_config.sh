@@ -34,6 +34,8 @@ uci commit firewall
 /etc/init.d/firewall reload
 
 # Build and launch container with minimal config
+mkdir -p mosquitto/config/certs
+
 cp mosquitto.conf ./mosquitto/config/mosquitto.conf
 docker build --network host -t mosquitto_with_openssl .
 docker-compose -f ./mqttcompose.yml up -d
@@ -68,6 +70,9 @@ docker exec -it ${CONTAINER_NAME} sh ./create_cert.sh
 
 
 # File paths for needed cert files
-sed -i '/^#cafile /mosquitto/config/certs/ca.crt/s/^#//' "$CONFIG_FILE"  # Uncomment '#cafile /mosquitto/config/certs/ca.crt'
-sed -i '/^#certfile /mosquitto/config/certs/server.crt/s/^#//' "$CONFIG_FILE"  # Uncomment '#certfile /mosquitto/config/certs/server.crt'
-sed -i '/^#keyfile /mosquitto/config/certs/server.key/s/^#//' "$CONFIG_FILE"  # Uncomment '#keyfile /mosquitto/config/certs/server.key'
+sed -i '/^#cafile /s/^#//' "$CONFIG_FILE"  # Uncomment '#cafile /mosquitto/config/certs/ca.crt'
+sed -i '/^#certfile /s/^#//' "$CONFIG_FILE"  # Uncomment '#certfile /mosquitto/config/certs/server.crt'
+sed -i '/^#keyfile /s/^#//' "$CONFIG_FILE"  # Uncomment '#keyfile /mosquitto/config/certs/server.key'
+
+# Restart container to apply changes
+docker restart mosquitto

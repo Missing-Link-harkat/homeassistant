@@ -6,8 +6,7 @@ services:
     volumes:  
       - ./mosquitto:/mosquitto  
       - ./mosquitto/data:/mosquitto/data  
-      - ./mosquitto/log:/mosquitto/log  
-      - ./mosquitto/certs:/mosquitto/certs
+      - ./mosquitto/log:/mosquitto/log
     ports:  
       - 1883:1883
       - 8883:8883  
