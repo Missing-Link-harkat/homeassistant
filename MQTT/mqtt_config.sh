@@ -73,5 +73,11 @@ sed -i '/^#cafile /s/^#//' "$CONFIG_FILE"  # Uncomment '#cafile /mosquitto/confi
 sed -i '/^#certfile /s/^#//' "$CONFIG_FILE"  # Uncomment '#certfile /mosquitto/config/certs/server.crt'
 sed -i '/^#keyfile /s/^#//' "$CONFIG_FILE"  # Uncomment '#keyfile /mosquitto/config/certs/server.key'
 
+
+# Enable ACL
+
+cp acl.conf ./mosquitto/config/acl.conf
+sed -i '/^#acl_file /s/^#//' "$CONFIG_FILE"  # Uncomment '#acl_file /mosquitto/config/acl.conf'
+
 # Restart container to apply changes
 docker restart mosquitto
