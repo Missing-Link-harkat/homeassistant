@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# Spins up and configures MQTT
+
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 
 # Check if docker installed
