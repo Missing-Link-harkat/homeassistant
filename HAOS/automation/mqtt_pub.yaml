@@ -1,7 +1,11 @@
 alias: mqtt-pub-coffee-maker-switch
 description: ""
 triggers:
-  - entity_id: sensor.coffeemaker_mqtt_publisher
+  - entity_id:
+      - switch.SWITCH_NAME
+      - sensor.SENSOR_NAME
+      - sensor.SENSOR_NAME
+      - sensor.SENSOR_NAME
     trigger: state
 actions:
   - data:
