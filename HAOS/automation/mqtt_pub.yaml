@@ -1,0 +1,26 @@
+alias: mqtt-pub-coffee-maker-switch
+description: ""
+triggers:
+  - entity_id: sensor.coffeemaker_mqtt_publisher
+    trigger: state
+actions:
+  - data:
+      topic: test/topic
+      payload: |-
+        {
+          "switch_state": "{{ states('switch.SENSOR_NAME') | default('unavailable') }}",
+          "current": {
+            "value": "{{ states('sensor.SENSOR_NAME_current') | default('unavailalbe') }}",
+            "unit": "Ampere"
+          },
+          "power": {
+            "value": "{{ states('sensor.SENSOR_NAME_power') | default('unavailable') }}",
+            "unit": "Wattage"
+          },
+          "voltage": {
+            "value": "{{ states('sensor.SENSOR_NAME_voltage') | default('unavailable') }}",
+            "unit": "Volts"
+          },
+          "device_available": "{{ 'false' if states('switch.SENSOR_NAME') == 'unavailable' or states('switch.SENSOR_NAME') is none else 'true' }}"
+        }
+    action: mqtt.publish
