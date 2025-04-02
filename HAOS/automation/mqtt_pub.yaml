@@ -9,6 +9,8 @@ actions:
       payload: |-
         {
           "switch_state": "{{ states('switch.SENSOR_NAME') | default('unavailable') }}",
+          "name": "coffee-maker-switch",
+          "entity_name": "switch.SENSOR_NAME",
           "current": {
             "value": "{{ states('sensor.SENSOR_NAME_current') | default('unavailalbe') }}",
             "unit": "Ampere"
@@ -21,6 +23,6 @@ actions:
             "value": "{{ states('sensor.SENSOR_NAME_voltage') | default('unavailable') }}",
             "unit": "Volts"
           },
-          "device_available": "{{ 'false' if states('switch.SENSOR_NAME') == 'unavailable' or states('switch.SENSOR_NAME') is none else 'true' }}"
+          "device_available": "{{ 'false' if states('switch.SENSOR_NAME_1') == 'unavailable' or states('switch.SENSOR_NAME') is none else 'true' }}"
         }
     action: mqtt.publish
