@@ -1,0 +1,14 @@
+alias: obk6 light color change to red
+description: change obk6 custom firmware light to red
+triggers: []
+conditions: []
+actions:
+  - target:
+      entity_id: light.ENTITY_TO_HERE
+    data:
+      rgb_color:
+        - 255
+        - 0
+        - 0
+    action: light.turn_on
+mode: single
