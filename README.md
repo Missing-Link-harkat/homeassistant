@@ -1,8 +1,8 @@
 # Homeassistant
 
-Homeassistant automation system running on OpenWRT.
+Homeassistant automation system running on OpenWrt.
 
-- OpenWRT 24.10 (ext 4)
+- OpenWRT 24.10.1 (ext 4)
 - Home Assistant in Docker
 - Mosquitto MQTT broker in docker
 
