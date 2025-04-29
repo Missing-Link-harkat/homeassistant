@@ -3,9 +3,11 @@
 # Updates partition UUID to make system bootable
 echo "Updating partition UUID"
 
-ROOT_PARTUUID_BASE=$(blkid -s PARTUUID -o value /dev/mmcblk0p2 | cut -d '-' -f 1)
+ROOT_PART=/dev/mmcblk0p2
 
-ROOT_PARTUUID_FULL=$(blkid -s PARTUUID -o value /dev/mmcblk0p2)
+ROOT_PARTUUID_BASE=$(blkid -s PARTUUID -o value $ROOT_PART | cut -d '-' -f 1)
+
+ROOT_PARTUUID_FULL=$(blkid -s PARTUUID -o value $ROOT_PART)
 
 # Update values
 echo "$ROOT_PARTUUID_BASE" > /boot/partuuid.txt
