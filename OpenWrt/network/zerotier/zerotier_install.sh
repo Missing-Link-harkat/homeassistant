@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# Using native OpenWrt package (if the package has been finally fixed)
+
 if [ $# -lt 2 ]; then
     echo "Usage: $0 <Zerotier network id> <Whitelisted UUID from zerotier>"
     exit 1
